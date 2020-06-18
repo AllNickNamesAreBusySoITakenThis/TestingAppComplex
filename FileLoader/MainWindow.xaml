@@ -1,0 +1,32 @@
+﻿<Window x:Class="FileLoader.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FileLoader"
+        mc:Ignorable="d"
+        Title="Загрузчик файлов" Height="450" Width="800" ResizeMode="NoResize">
+    <Window.DataContext>
+        <local:MainWindowViewModel/>
+    </Window.DataContext>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="160"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <TextBox TextWrapping="Wrap" Margin="5" Grid.ColumnSpan="2" Text="{Binding LogStr}" IsReadOnly="True" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Visible"/>
+        <TextBlock Text="Файл для загрузки" Grid.Row="1" Grid.Column="0" Margin="5" VerticalAlignment="Center" FontSize="14"/>
+        <TextBox Grid.Row="1" Grid.Column="1" Margin="5,5,55,5" FontSize="16" Text="{Binding FileName, UpdateSourceTrigger=PropertyChanged}"/>
+        <Button Grid.Column="1" Grid.Row="1" HorizontalAlignment="Right" Margin="5" Width="40" Content="..." Command="{Binding OpenFileCommand}"/>
+        <TextBlock Text="Строка подключения" Grid.Row="2" Grid.Column="0" Margin="5" VerticalAlignment="Center" FontSize="14"/>
+        <TextBox Grid.Row="2" Grid.Column="1" Margin="5" FontSize="16" Text="{Binding Constr, UpdateSourceTrigger=PropertyChanged}"/>
+        <Button Grid.Row="3" Grid.ColumnSpan="2" HorizontalAlignment="Right" Margin="5" Command="{Binding CloseCommand}" Content="Закрыть" Width="120"/>
+        <Button Grid.Row="3" Grid.ColumnSpan="2" HorizontalAlignment="Right" Margin="5,5,135,5" Command="{Binding WriteToDBCommand}" Content="Записать в БД" Width="120"/>
+    </Grid>
+</Window>
