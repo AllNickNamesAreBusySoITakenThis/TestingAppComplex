@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MongoDB.Bson.Serialization.Attributes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,7 @@ namespace FileLoader
 {
     public class PointerData
     {
+        [BsonId]
         public string Name { get; set; } = "";
         public string Description { get; set; } = "";
         public double East { get; set; }
@@ -28,22 +30,24 @@ namespace FileLoader
             Hight = _hight;
             Value = _value;
         }
-        public PointerData(Dictionary<string,object> dict)
+        public static PointerData GetPointerData(Dictionary<string,object> dict)
         {
-            double _east = 0;
-            double _north = 0;
-            double _hight = 0;
-            double _value = 0;
-            Name = dict["NAME"].ToString();
-            Description = dict["DESCRIPTION"].ToString();
-            Double.TryParse(dict["EAST"].ToString().Replace(".",","),out _east);
-            Double.TryParse(dict["NORTH"].ToString().Replace(".", ","), out _north);
-            Double.TryParse(dict["HIGHT"].ToString().Replace(".", ","), out _hight);
-            Double.TryParse(dict["VALUE"].ToString().Replace(".", ","), out _value);
-            East = _east;
-            North = _north;
-            Hight = _hight;
-            Value = _value;
+            try
+            {
+                return new PointerData()
+                {
+                    Name = dict["NAME"].ToString(),
+                    Description = dict["DESCRIPTION"].ToString(),
+                    East = Convert.ToDouble(dict["EAST"].ToString().Replace(".", ",")),
+                    North = Convert.ToDouble(dict["NORTH"].ToString().Replace(".", ",")),
+                    Hight = Convert.ToDouble(dict["HIGHT"].ToString().Replace(".", ",")),
+                    Value = Convert.ToDouble(dict["VALUE"].ToString().Replace(".", ","))
+                };
+            }
+            catch 
+            {
+                return null;
+            }
         }
     }
 }

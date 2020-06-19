@@ -38,16 +38,29 @@ namespace FileLoader
                     if (CheckFileFormat(filepath))
                     {
                         var fileData = File.ReadAllLines(filepath);
-                        var firstLine = fileData[0].Split(new char[] { ';' });
+                        var firstLine = fileData[0].Split(new char[] { ';' },StringSplitOptions.RemoveEmptyEntries);
                         for (int i = 1; i < fileData.Length; i++)
                         {
-                            var cLine = fileData[i].Split(new char[] { ';' });
-                            Dictionary<string, object> dict = new Dictionary<string, object>();
-                            for (int j = 0; j < cLine.Length; j++)
+                            var cLine = fileData[i].Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                            if (cLine.Length == 6)
                             {
-                                dict.Add(firstLine[j].ToUpper(), string.IsNullOrEmpty(cLine[j]) ? "0" : cLine[j]);
+                                Dictionary<string, object> dict = new Dictionary<string, object>();
+                                for (int j = 0; j < cLine.Length; j++)
+                                {
+                                    dict.Add(firstLine[j].ToUpper(), cLine[j]);
+                                }
+                                var toAdd = PointerData.GetPointerData(dict);
+                                if (toAdd != null)
+                                    result.Add(toAdd);
+                                else
+                                {
+                                    Log.Add(string.Format("Пропущена строка {0} - некорректные данные в строке.", i));
+                                }
                             }
-                            result.Add(new PointerData(dict));
+                            else
+                            {
+                                Log.Add(string.Format("Пропущена строка {0} - недостаточно данных в строке.", i));
+                            }
                         }           
                     }          
                 }
@@ -103,13 +116,13 @@ namespace FileLoader
                 {
                     MongoClient client = new MongoClient(constr);
                     IMongoDatabase database = client.GetDatabase("pointersDB");
-                    var collection = database.GetCollection<PointerData>("pointersData");
-                    var filter = Builders<PointerData>.Filter.Empty;
-                    await collection.DeleteManyAsync(filter);
+                    var collection = database.GetCollection<PointerData>("pointersData");                    
+                    //await collection.DeleteManyAsync(filter);
                     foreach (var pointer in pointers)
                     {
-                        await collection.InsertOneAsync(pointer);
-                        Log.Add(string.Format("В БД добавлена запись о объекте {0}", pointer.Description));
+                        var filter = Builders<PointerData>.Filter.Eq("Name",pointer.Name);
+                        await collection.ReplaceOneAsync(filter,pointer, new ReplaceOptions { IsUpsert = true });
+                        Log.Add(string.Format("В БД добавлена запись об объекте {0}", pointer.Description));
                     }
                 }
             }
