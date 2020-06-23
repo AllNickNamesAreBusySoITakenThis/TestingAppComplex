@@ -3,7 +3,6 @@ import thunk from 'redux-thunk';
 import { connectRouter, routerMiddleware } from 'connected-react-router';
 import { History } from 'history';
 import { ApplicationState, reducers } from './';
-import * as PointerDatas from './PointerDatas';
 
 export default function configureStore(history: History, initialState?: ApplicationState) {
     const middleware = [
@@ -13,7 +12,6 @@ export default function configureStore(history: History, initialState?: Applicat
 
     const rootReducer = combineReducers({
         ...reducers,
-        pointerDatas: PointerDatas.reducer,
         router: connectRouter(history)
     });
 

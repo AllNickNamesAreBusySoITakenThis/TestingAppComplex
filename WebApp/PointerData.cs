@@ -13,5 +13,14 @@ namespace WebApp
         public double North { get; set; }
         public double Hight { get; set; }
         public double Value { get; set; }
+        public PointerData(string _name, string _descr, double _east, double _north, double _hight, double _value)
+        {
+            Name = _name;
+            Description = _descr;
+            East = _east;
+            North = _north;
+            Hight = _hight;
+            Value = _value;
+        }
     }
 }
