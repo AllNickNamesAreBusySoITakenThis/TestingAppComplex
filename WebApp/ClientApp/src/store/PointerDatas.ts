@@ -23,7 +23,7 @@ interface ReceivePointerDatasAction {
     datas: PointerData[];
 }
 
-type KnownAction = RequestPointerDatasAction | ReceivePointerDatasAction;
+export type KnownAction = RequestPointerDatasAction | ReceivePointerDatasAction;
 
 export const actionCreators = {
     requestPointerDatas: (): AppThunkAction<KnownAction> => (dispatch, getState) => {
@@ -36,19 +36,18 @@ export const actionCreators = {
                     dispatch({ type: 'RECEIVE_POINTER_DATAS', datas: data });
                 });
 
-            dispatch({ type: 'REQUEST_POINTER_DATAS'});
+            dispatch({ type: 'REQUEST_POINTER_DATAS' });
         }
     }
 };
 
 const unloadedState: PointerDatasState = { datas: [], isLoading: false };
 
-export const reducer: Reducer<PointerDatasState> = (state: PointerDatasState | undefined, incomingAction: Action): PointerDatasState => {
+export const reducer: Reducer<PointerDatasState> = (state: PointerDatasState | undefined, action: KnownAction): PointerDatasState => {
     if (state === undefined) {
         return unloadedState;
     }
 
-    const action = incomingAction as KnownAction;
     switch (action.type) {
         case 'REQUEST_POINTER_DATAS':
             return {
@@ -60,7 +59,7 @@ export const reducer: Reducer<PointerDatasState> = (state: PointerDatasState | u
                 datas: action.datas,
                 isLoading: false
             };
-            break;
     }
-    return state;
+
+    // return state;
 };
