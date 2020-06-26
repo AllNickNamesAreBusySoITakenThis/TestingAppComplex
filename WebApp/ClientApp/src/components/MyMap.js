@@ -17,6 +17,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var React = require("react");
 var react_leaflet_1 = require("react-leaflet");
 require("./MyMap.css");
+require("./Leaflet/leaflet.css");
 var myMApUrl = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}';
 var mapToken = 'pk.eyJ1IjoidmFubnlrbyIsImEiOiJja2J1aGw3OTEwNWsxMnJwZ2FueTZmcndpIn0.mQrdpQ4fyJDJX_JvxmNsqQ';
 var stamenTonerAttr = 'asdasd';

@@ -8,6 +8,7 @@ import { ApplicationState } from '../store';
 import { Map, TileLayer, Marker, Popup } from 'react-leaflet';
 import * as PointerDatasStore from '../store/PointerDatas';
 import './MyMap.css'
+import './Leaflet/leaflet.css'
 
 const myMApUrl = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}';
 const mapToken = 'pk.eyJ1IjoidmFubnlrbyIsImEiOiJja2J1aGw3OTEwNWsxMnJwZ2FueTZmcndpIn0.mQrdpQ4fyJDJX_JvxmNsqQ';
