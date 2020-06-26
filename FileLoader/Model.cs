@@ -1,4 +1,6 @@
-﻿using MongoDB.Driver;
+﻿using MongoDB.Bson;
+using MongoDB.Driver;
+using MongoDB.Driver.GeoJsonObjectModel;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -129,6 +131,31 @@ namespace FileLoader
             catch (Exception ex)
             {
                 Log.Add(string.Format("Ошибка записи в БД: {0}", ex.Message));
+            }
+        }
+
+        public async static Task WriteGeoJsonToDatabase(string constr, List<PointerData> pointers)
+        {
+            try
+            {
+                MongoClient client = new MongoClient(constr);
+                IMongoDatabase database = client.GetDatabase("pointersDB");
+                var collection = database.GetCollection<BsonDocument>("pointersGeoData");
+                foreach(var pointer in pointers)
+                {
+                    var doc = new BsonDocument()
+                    {
+                        {"Name",pointer.Name },
+                        {"Description",pointer.Description },
+                        {"Value",pointer.Value },
+                        {"Location",GeoJson.Point(new GeoJson3DProjectedCoordinates(pointer.East,pointer.North,pointer.Hight)).ToBsonDocument() }
+                    };
+                    await collection.InsertOneAsync(doc);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Add(string.Format("Ошибка записи GEOJSON в БД: {0}", ex.Message));
             }
         }
 
