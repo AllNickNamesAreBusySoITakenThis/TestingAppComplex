@@ -6,6 +6,7 @@ import { RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
 import { ApplicationState } from '../store';
 import { Map, TileLayer, Marker, Popup } from 'react-leaflet';
+import { GeoJSON } from 'leaflet';
 import * as PointerDatasStore from '../store/PointerDatas';
 import './MyMap.css'
 
@@ -14,7 +15,7 @@ const mapToken = 'pk.eyJ1IjoidmFubnlrbyIsImEiOiJja2J1aGw3OTEwNWsxMnJwZ2FueTZmcnd
 const stamenTonerAttr = 'asdasd';
 const mapId = 'mapbox/streets-v11';
 const mapCenter = [39.9528, -75.1638];
-const zoomLevel = 13;
+const zoomLevel = 8;
 
 type PointerDataProps =
     PointerDatasStore.PointerDatasState // ... state we've requested from the Redux store
@@ -58,12 +59,14 @@ class MyMapComponent extends React.PureComponent<PointerDataProps>
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" noWrap={false} tileSize={512} />
                     {this.props.datas.map((point: PointerDatasStore.PointerData) => 
                         point.east > 0 && point.north > 0 &&
-                            <Marker position={[point.east, point.north]}>
+                        <Marker position={GeoJSON.coordsToLatLng([point.east, point.north, point.hight])}>
                                 <Popup>
                                     {point.description} <br /> {point.value}
                                 </Popup>
-                            </Marker>                        
-                    )}                    
+                            </Marker>
+                    
+                    )}   
+                    
                 </Map>
             </div>
         );
