@@ -15,9 +15,10 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = require("react");
+var react_redux_1 = require("react-redux");
 var react_leaflet_1 = require("react-leaflet");
+var PointerDatasStore = require("../store/PointerDatas");
 require("./MyMap.css");
-require("./Leaflet/leaflet.css");
 var myMApUrl = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}';
 var mapToken = 'pk.eyJ1IjoidmFubnlrbyIsImEiOiJja2J1aGw3OTEwNWsxMnJwZ2FueTZmcndpIn0.mQrdpQ4fyJDJX_JvxmNsqQ';
 var stamenTonerAttr = 'asdasd';
@@ -29,6 +30,17 @@ var MyMapComponent = /** @class */ (function (_super) {
     function MyMapComponent() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    // This method is called when the component is first added to the document
+    MyMapComponent.prototype.componentDidMount = function () {
+        this.ensureDataFetched();
+    };
+    // This method is called when the route parameters change
+    MyMapComponent.prototype.componentDidUpdate = function () {
+        this.ensureDataFetched();
+    };
+    MyMapComponent.prototype.ensureDataFetched = function () {
+        this.props.requestPointerDatas();
+    };
     MyMapComponent.prototype.render = function () {
         return (React.createElement(React.Fragment, null,
             React.createElement("h1", { id: "tabelLabel" }, "Map of points"),
@@ -36,16 +48,23 @@ var MyMapComponent = /** @class */ (function (_super) {
             this.renderMap()));
     };
     MyMapComponent.prototype.renderMap = function () {
-        return (React.createElement("div", { className: "mapdiv" },
-            React.createElement(react_leaflet_1.Map, { center: [51.505, -0.09], zoom: zoomLevel, bounds: [[50.505, -29.09], [52.505, 29.09],] },
+        return (React.createElement("div", { id: "mapid" },
+            React.createElement(react_leaflet_1.Map, { center: [51.505, -0.09], zoom: zoomLevel },
                 React.createElement(react_leaflet_1.TileLayer, { attribution: '&copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors', url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", noWrap: false, tileSize: 512 }),
-                React.createElement(react_leaflet_1.Marker, { position: [51.505, -0.09] },
-                    React.createElement(react_leaflet_1.Popup, null,
-                        "A pretty CSS3 popup. ",
-                        React.createElement("br", null),
-                        " Easily customizable.")))));
+                this.props.datas.map(function (point) {
+                    return point.east > 0 && point.north > 0 &&
+                        React.createElement(react_leaflet_1.Marker, { position: [point.east, point.north] },
+                            React.createElement(react_leaflet_1.Popup, null,
+                                point.description,
+                                " ",
+                                React.createElement("br", null),
+                                " ",
+                                point.value));
+                }))));
     };
     return MyMapComponent;
 }(React.PureComponent));
-exports.default = MyMapComponent;
+exports.default = react_redux_1.connect(function (state) { return state.pointerDatas; }, // Selects which state properties are merged into the component's props
+PointerDatasStore.actionCreators // Selects which action creators are merged into the component's props
+)(MyMapComponent);
 //# sourceMappingURL=MyMap.js.map
