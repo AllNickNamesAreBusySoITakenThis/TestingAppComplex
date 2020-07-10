@@ -94,7 +94,7 @@ namespace FileLoader
         private async void ExecuteWriteToDB()
         {
             //await Model.WriteToDatabase(Constr, await Task.Run(()=>Model.LoadData(FileName)));
-            await Model.WriteGeoJsonToDatabase(Constr, await Task.Run(() => Model.LoadData(FileName)));
+            await Model.WriteGeoJsonToDatabase(Constr, await Task.Run(() => Model.LoadData(Model.LoadFileData(FileName))));
         }
 
         public ICommand CloseCommand

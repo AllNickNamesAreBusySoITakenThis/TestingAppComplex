@@ -49,5 +49,22 @@ namespace FileLoader
                 return null;
             }
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is PointerData)
+            {
+                return (
+                    Name == (obj as PointerData).Name &&
+                    Description == (obj as PointerData).Description &&
+                    East == (obj as PointerData).East &&
+                    North == (obj as PointerData).North &&
+                    Hight == (obj as PointerData).Hight &&
+                    Value == (obj as PointerData).Value
+                    );
+            }
+            else
+                return false;
+        }
     }
 }

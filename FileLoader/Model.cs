@@ -30,46 +30,50 @@ namespace FileLoader
                 OnStaticPropertyChanged("Log");
             }
         }
-        public static List<PointerData> LoadData(string filepath)
+        public static string[] LoadFileData(string filepath)
+        {
+            if (File.Exists(filepath))
+            {
+                return File.ReadAllLines(filepath);
+            }
+            else
+            {
+                Log.Add(string.Format("Файл не найден: {0}", filepath));
+                return null;
+            }
+        }
+        public static List<PointerData> LoadData(string[] fileData)
         {
             List<PointerData> result = new List<PointerData>();
             try
             {
-                if(File.Exists(filepath))
+                if (CheckFileFormat(fileData))
                 {
-                    if (CheckFileFormat(filepath))
+                    var firstLine = fileData[0].Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                    for (int i = 1; i < fileData.Length; i++)
                     {
-                        var fileData = File.ReadAllLines(filepath);
-                        var firstLine = fileData[0].Split(new char[] { ';' },StringSplitOptions.RemoveEmptyEntries);
-                        for (int i = 1; i < fileData.Length; i++)
+                        var cLine = fileData[i].Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                        if (cLine.Length == 6)
                         {
-                            var cLine = fileData[i].Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-                            if (cLine.Length == 6)
+                            Dictionary<string, object> dict = new Dictionary<string, object>();
+                            for (int j = 0; j < cLine.Length; j++)
                             {
-                                Dictionary<string, object> dict = new Dictionary<string, object>();
-                                for (int j = 0; j < cLine.Length; j++)
-                                {
-                                    dict.Add(firstLine[j].ToUpper(), cLine[j]);
-                                }
-                                var toAdd = PointerData.GetPointerData(dict);
-                                if (toAdd != null)
-                                    result.Add(toAdd);
-                                else
-                                {
-                                    Log.Add(string.Format("Пропущена строка {0} - некорректные данные в строке.", i));
-                                }
+                                dict.Add(firstLine[j].ToUpper(), cLine[j]);
                             }
+                            var toAdd = PointerData.GetPointerData(dict);
+                            if (toAdd != null)
+                                result.Add(toAdd);
                             else
                             {
-                                Log.Add(string.Format("Пропущена строка {0} - недостаточно данных в строке.", i));
+                                Log.Add(string.Format("Пропущена строка {0} - некорректные данные в строке.", i));
                             }
-                        }           
-                    }          
-                }
-                else
-                {
-                    Log.Add(string.Format("Файл не найден: {0}", filepath));
-                }
+                        }
+                        else
+                        {
+                            Log.Add(string.Format("Пропущена строка {0} - недостаточно данных в строке.", i));
+                        }
+                    }
+                }               
             }
             catch (Exception ex)
             {
@@ -77,11 +81,11 @@ namespace FileLoader
             }
             return result;
         }
-        public static bool CheckFileFormat(string filename)
+        public static bool CheckFileFormat(string[] filedata)
         {            
             try
             {                
-                var filedata = File.ReadAllLines(filename);
+                //var filedata = File.ReadAllLines(filename);
                 if(filedata.Length>0)
                 {
                     bool result = true;
